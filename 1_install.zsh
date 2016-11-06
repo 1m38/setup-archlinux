@@ -11,12 +11,13 @@ parted -s /dev/sda mklabel gpt
 parted -s /dev/sda -- mkpart primary ext2 0 2MB
 parted -s /dev/sda -- mkpart primary ext4 2MB -4098MB
 parted -s /dev/sda -- mkpart primary ext4 -4097MB -1MB
-mkfs.ext4 /dev/sda1
-mkswap /dev/sda2
-swapon /dev/sda2
+mkfs.ext2 /dev/sda1
+mkfs.ext4 /dev/sda2
+mkswap /dev/sda3
+swapon /dev/sda3
 
 # Install Base system
-mount /dev/sda1 /mnt
+mount /dev/sda2 /mnt
 mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.old
 grep jp /etc/pacman.d/mirrorlist.old > /etc/pacman.d/mirrorlist
 cat /etc/pacman.d/mirrorlist.old >> /etc/pacman.d/mirrorlist

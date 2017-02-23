@@ -3,6 +3,8 @@
 
 vared -p "Hostname: " -c NEWHOSTNAME
 vared -p "root passwd: " -c ROOTPASSWD
+vared -p "User Name: " -c AUSERNAME
+vared -p "User Passwd: " -c AUSERPASSWD
 
 set -ex
 
@@ -35,6 +37,8 @@ echo $NEWHOSTNAME > /mnt/etc/hostname
 mkdir -p /mnt/root
 cp -af `dirname $0` /mnt/root/setup
 echo "echo \"root:$ROOTPASSWD\" | chpasswd" >> /mnt/root/setup/chroot-setup.sh
+echo "useradd -m -g users -G wheel $AUSERNAME" >> /mnt/root/setup/chroot-setup.sh
+echo "echo \"$AUSERNAME:$AUSERPASSWD\" | chpasswd" >> /mnt/root/setup/chroot-setup.sh
 chmod +x /mnt/root/setup/chroot-setup.sh
 arch-chroot /mnt /root/setup/chroot-setup.sh
 rm -rf /mnt/root/setup

@@ -34,11 +34,11 @@ echo $NEWHOSTNAME > /mnt/etc/hostname
 # Run setup script on chroot environment
 mkdir -p /mnt/root
 cp -af `dirname $0` /mnt/root/setup
-echo "echo root:$ROOTPASSWD | chpasswd" >> /mnt/root/setup/chroot-setup.sh
+echo "echo \"root:$ROOTPASSWD\" | chpasswd" >> /mnt/root/setup/chroot-setup.sh
 chmod +x /mnt/root/setup/chroot-setup.sh
 arch-chroot /mnt /root/setup/chroot-setup.sh
 rm -rf /mnt/root/setup
 
 # shutdown
-umount /dev/sda2
+umount /dev/sda1 /dev/sda2
 poweroff

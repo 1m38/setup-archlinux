@@ -9,4 +9,9 @@ locale-gen
 echo "LANG=ja_JP.UTF-8" >> /etc/locale.conf
 echo -e 'KEYMAP=jp106\nFONT=Lat2-Terminus16' > /etc/vconsole.conf
 systemctl enable dhcpcd.service
+# EFI boot setting
 bootctl --path=/boot install
+cp -f /root/setup/efi_setup/loader.conf /boot/loader/loader.conf
+cp -f /root/setup/efi_setup/arch.conf /boot/loader/entries/arch.conf
+PARTUUID=`blkid -s PARTUUID -o value /dev/sda2`
+sed -i -e "s|\[PARTUUID\]|$PARTUUID|" /boot/loader/entries/arch.conf

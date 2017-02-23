@@ -4,6 +4,7 @@
 vared -p "Hostname: " -c NEWHOSTNAME
 vared -p "root passwd: " -c ROOTPASSWD
 
+set -ex
 
 # setup HDD (4GB swap)
 parted -s /dev/sda mklabel gpt
@@ -32,11 +33,11 @@ echo $NEWHOSTNAME > /mnt/etc/hostname
 
 # Run setup script on chroot environment
 mkdir -p /mnt/root
-cp -f `dirname $0`/chroot-setup.sh /mnt/root/chroot-setup.sh
-echo "echo root:$ROOTPASSWD | chpasswd" >> /mnt/root/chroot-setup.sh
-chmod +x /mnt/root/chroot-setup.sh
-arch-chroot /mnt /root/chroot-setup.sh
-rm /mnt/root/chroot-setup.sh
+cp -af `dirname $0` /mnt/root/setup
+echo "echo root:$ROOTPASSWD | chpasswd" >> /mnt/root/setup/chroot-setup.sh
+chmod +x /mnt/root/setup/chroot-setup.sh
+arch-chroot /mnt /root/setup/chroot-setup.sh
+rm -rf /mnt/root/setup
 
 # shutdown
 umount /dev/sda2

@@ -5,19 +5,21 @@ vared -p "Hostname: " -c NEWHOSTNAME
 vared -p "root passwd: " -c ROOTPASSWD
 
 
-loadkeys jp106
 # setup HDD (4GB swap)
 parted -s /dev/sda mklabel gpt
-parted -s /dev/sda -- mkpart primary ext2 0 2MB
-parted -s /dev/sda -- mkpart primary ext4 2MB -4098MB
-parted -s /dev/sda -- mkpart primary ext4 -4097MB -1MB
-mkfs.ext2 /dev/sda1
+parted -s /dev/sda -- mkpart ESP fat32 1MiB 513MiB
+parted -s /dev/sda -- set 1 boot on
+parted -s /dev/sda -- mkpart primary ext4 513MiB -4098MiB
+parted -s /dev/sda -- mkpart primary linux-swap -4098MiB 100%
+mkfs.vfat -F32 /dev/sda1
 mkfs.ext4 /dev/sda2
 mkswap /dev/sda3
 swapon /dev/sda3
 
 # Install Base system
 mount /dev/sda2 /mnt
+mkdir -p /mnt/boot
+mount /dev/sda1 /mnt/boot
 mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.old
 grep jp /etc/pacman.d/mirrorlist.old > /etc/pacman.d/mirrorlist
 cat /etc/pacman.d/mirrorlist.old >> /etc/pacman.d/mirrorlist
@@ -34,3 +36,8 @@ cp -f `dirname $0`/chroot-setup.sh /mnt/root/chroot-setup.sh
 echo "echo root:$ROOTPASSWD | chpasswd" >> /mnt/root/chroot-setup.sh
 chmod +x /mnt/root/chroot-setup.sh
 arch-chroot /mnt /root/chroot-setup.sh
+rm /mnt/root/chroot-setup.sh
+
+# shutdown
+umount /dev/sda2
+poweroff
